@@ -1,12 +1,12 @@
 # Define variables
 rootdir := $(shell pwd)
 instdir := $(rootdir)/buildDir
-vlc := $(instdir)/bin/vlc
+#vlc := $(instdir)/bin/vlc
 ffmpeg := $(instdir)/bin/ffmpeg
 x264 := $(instdir)/bin/x264
 x265 := $(instdir)/bin/x265
 fdk := $(instdir)/lib/libfdk-aac.a
-yasm := $(instdir)/bin/yasm
+nasm := $(instdir)/bin/nasm
 mad := $(instdir)/lib/libmad.a
 a52 := $(instdir)/bin/a52dec
 ogg := $(instdir)/lib/libogg.a
@@ -20,48 +20,48 @@ CFG_CPPFLAGS := -I$(instdir)/include
 CFG_PATH := $(instdir)/bin
 CXXFLAGS = -std=c++11
 
-all := $(vlc) $(ffmpeg) $(x264) $(x265) $(fdk) $(mad) $(a52) $(vorbis) $(theora) $(vpx) $(flac) $(yasm) $(ogg)
+all := $(ffmpeg) $(x264) $(x265) $(fdk) $(mad) $(a52) $(vorbis) $(theora) $(vpx) $(flac) $(nasm) $(ogg) #$(vlc)
 
 # Default build target
 default: $(all)
 
 # Define build dependencies
-$(vlc): vlc-2.2.8.tar.xz $(ffmpeg)
-$(ffmpeg): ffmpeg-2.8.15.tar.bz2 $(x264) $(x265) $(fdk) $(mad) $(a52) $(vorbis) $(theora) $(vpx) $(flac)
-$(x264): last_x264.tar.bz2 $(yasm)
-$(x265): x265_2.6.tar.gz $(yasm)
+#$(vlc): vlc-2.2.8.tar.xz $(ffmpeg)
+$(ffmpeg): ffmpeg-4.2.tar.bz2 $(x264) $(x265) $(fdk) $(mad) $(a52) $(vorbis) $(theora) $(vpx) $(flac)
+$(x264): last_x264.tar.bz2 $(nasm)
+$(x265): x265_3.1.2.tar.gz $(nasm)
 $(fdk): fdk-aac-master.zip
-$(yasm): yasm-1.3.0.tar.gz
+$(nasm): nasm-2.14.02.tar.xz
 $(mad): libmad-0.15.1b.tar.gz
 $(a52): a52dec-0.7.4.tar.gz
-$(ogg): libogg-1.3.2.tar.xz
+$(ogg): libogg-1.3.3.tar.xz
 $(vorbis): libvorbis-1.3.4.tar.xz $(ogg)
 $(theora): libtheora-1.1.1.tar.bz2 $(ogg)
-$(vpx): libvpx-v1.7.0.tar.bz2 $(yasm) #WARNING: The default extracts in pwd and had to be re-tarred for this build
-$(flac): flac-1.3.0.tar.xz
+$(vpx): libvpx-v1.8.1.tar.gz $(nasm) #WARNING: The default extracts in pwd and had to be re-tarred for this build
+$(flac): flac-1.3.3.tar.xz
 
 # Define extraction directories
-$(vlc): extdir := vlc-2.2.8
-$(ffmpeg): extdir := ffmpeg-2.8.15
-$(x264): extdir := x264-snapshot-20140817-2245
-$(x265): extdir := x265_v2.6
+#$(vlc): extdir := vlc-2.2.8
+$(ffmpeg): extdir := ffmpeg-4.2
+$(x264): extdir := x264-snapshot-20190813-2245
+$(x265): extdir := x265_3.1.2
 $(fdk): extdir := fdk-aac-master
-$(yasm): extdir := yasm-1.3.0
+$(nasm): extdir := nasm-2.14.02
 $(mad): extdir := libmad-0.15.1b
 $(a52): extdir := a52dec-0.7.4
-$(ogg): extdir := libogg-1.3.2
+$(ogg): extdir := libogg-1.3.3
 $(vorbis): extdir := libvorbis-1.3.4
 $(theora): extdir := libtheora-1.1.1
-$(vpx): extdir := libvpx-v1.7.0
-$(flac): extdir := flac-1.3.0
+$(vpx): extdir := libvpx-v1.8.1
+$(flac): extdir := flac-1.3.3
 
 # Define configure parameters
-$(vlc): conf := ./configure --disable-lua --without-kde-solid --prefix=$(instdir)
+#$(vlc): conf := ./configure --disable-lua --without-kde-solid --prefix=$(instdir)
 $(ffmpeg): conf := ./configure --enable-shared --enable-gpl --enable-nonfree --enable-libfdk-aac --enable-libx264 --enable-libvorbis --enable-libvpx --enable-libx265 --prefix=$(instdir)
 $(x264): conf := ./configure --disable-opencl --enable-static --enable-shared --prefix=$(instdir)
 $(x265): conf := cmake -DCMAKE_INSTALL_PREFIX:PATH=$(instdir) source
 $(fdk): conf := ./autogen.sh && ./configure --prefix=$(instdir)
-$(yasm): conf := ./configure --prefix=$(instdir)
+$(nasm): conf := ./configure --prefix=$(instdir)
 $(mad): conf := CFLAGS="-Wall -g -O -fforce-addr -fthread-jumps -fcse-follow-jumps -fcse-skip-blocks -fexpensive-optimizations -fregmove -fschedule-insns2" ./configure --prefix=$(instdir)
 $(a52): conf := CFLAGS=-fPIC ./configure --prefix=$(instdir)
 $(ogg): conf := ./configure --prefix=$(instdir)
